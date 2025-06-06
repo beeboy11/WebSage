@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Web Scraper</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Add Marked.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>AI-Powered Web Scraper</h1>
+        
+        <div class="input-section">
+            <input type="url" id="websiteUrl" placeholder="Enter website URL to scrape" required>
+            <textarea id="userQuery" placeholder="What information do you want to extract? (Be specific)" required></textarea>
+            <button onclick="performScrape()">Analyze</button>
+        </div>
+
+        <div id="loadingIndicator" class="hidden">
+            <div class="spinner"></div>
+            <p>Analyzing website content...</p>
+        </div>
+
+        <div id="results" class="hidden">
+            <h2>Results</h2>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
