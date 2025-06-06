@@ -77,9 +77,11 @@ def scrape():
         })
 
     except Exception as e:
+        import logging
+        logging.error("An error occurred: %s", str(e), exc_info=True)
         return jsonify({
             'success': False,
-            'error': str(e)
+            'error': 'An internal error has occurred. Please try again later.'
         }), 500
 
 if __name__ == '__main__':
