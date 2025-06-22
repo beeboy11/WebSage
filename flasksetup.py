@@ -17,7 +17,7 @@ google_api_key = os.getenv('GOOGLE_API_KEY')
 if not google_api_key:
     raise ValueError("GOOGLE_API_KEY environment variable is not set.")
 genai.configure(api_key=google_api_key)
-model = genai.GenerativeModel('gemini-2.0-flash')  # Using the correct model name
+model = genai.GenerativeModel('gemini-2.0-flash') 
 
 def scrapeweb(url):
     try:
@@ -25,7 +25,7 @@ def scrapeweb(url):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
         response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()  # Raise an exception for bad status codes
+        response.raise_for_status()  
         soup = BeautifulSoup(response.content, 'html.parser')
         return soup.get_text(separator=' ', strip=True)
     except requests.RequestException as e:
@@ -35,7 +35,7 @@ def scrapeweb(url):
 def home():
     return render_template('index.html')
 
-@app.route('/scrape', methods=['POST'])  # Fixed typo in route name
+@app.route('/scrape', methods=['POST']) 
 def scrape():
     try:
         data = request.json
@@ -73,7 +73,7 @@ def scrape():
         response = model.generate_content(prompt)
         return jsonify({
             'success': True,
-            'result': response.text  # Changed from 'error' to 'result'
+            'result': response.text
         })
 
     except Exception as e:
