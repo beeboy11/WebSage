@@ -14,7 +14,7 @@ An AI-powered web scraping and analysis tool using Google's Gemini AI.
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/websage.git
+git clone https://github.com/olaabiodun/websage.git
 cd websage
 ```
 
