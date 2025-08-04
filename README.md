@@ -4,11 +4,11 @@ An AI-powered web scraping and analysis tool using Google's Gemini AI.
 
 ## Features
 
-- 🤖 AI-powered content analysis using Gemini Pro
-- 🌐 Intelligent web scraping capabilities
-- 💬 Natural language querying of web content
-- ⚡ Real-time processing and response
-- 🎨 Clean, modern user interface
+-  AI-powered content analysis using Gemini Pro
+-  Intelligent web scraping capabilities
+-  Natural language querying of web content
+-  Real-time processing and response
+-  Clean, modern user interface
 
 ## Installation
 

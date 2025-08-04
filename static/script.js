@@ -1,4 +1,4 @@
-async function performScrape() {
+async function performScrapej() {
     const url = document.getElementById('websiteUrl').value;
     const query = document.getElementById('userQuery').value;
     

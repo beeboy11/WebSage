@@ -27,7 +27,8 @@ def scrapeweb(url):
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()  
         soup = BeautifulSoup(response.content, 'html.parser')
-        return soup.get_text(separator=' ', strip=True)
+
+        return soup.prettify()
     except requests.RequestException as e:
         return f"Error scraping {url}: {str(e)}"
     
@@ -62,13 +63,35 @@ def scrape():
             }), 400
 
         prompt = f"""
-        Analyze the following webpage content and answer the user's question:
-        Content from {url}:
-        {content[:5000]}
-        
-        User Question: {query}
-        
-        Please provide a detailed, well-structured answer."""
+You are an expert web content analyst.
+
+Analyze the following HTML content extracted from: {url}
+
+Only focus on meaningful visible content — ignore scripts, styles, or metadata.
+
+---
+
+**User Question:**  
+{query}
+
+---
+
+**HTML Content (partial):**  
+{content[:5000]}
+
+---
+
+**Instructions:**
+- Extract and understand relevant visible content (e.g., headings, paragraphs, and lists).
+- Answer the user's question clearly and completely.
+- If appropriate, structure the output using:
+  - Bullet points
+  - Headings
+  - Tables (e.g., for pros and cons)
+- Be concise, informative, and avoid repeating the question.
+
+Provide a complete and well-structured response.
+"""
 
         response = model.generate_content(prompt)
         return jsonify({
