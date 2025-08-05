@@ -39,3 +39,4 @@ ENV/
 
 # Logs
 *.log
+.vercel

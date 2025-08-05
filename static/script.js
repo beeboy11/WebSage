@@ -10,6 +10,7 @@ async function performScrapej() {
     // Show loading indicator
     document.getElementById('loadingIndicator').classList.remove('hidden');
     document.getElementById('results').classList.add('hidden');
+
     
     try {
         const response = await fetch('/scrape', {
