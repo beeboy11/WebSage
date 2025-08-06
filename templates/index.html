@@ -16,9 +16,9 @@
         :root {
             --primary-color: #818CF8;
             --secondary-color: #A78BFA;
-            --background-color: #1F2937;
+            --background-color: oklch(20.5% 0 0);
             --text-color: #F3F4F6;
-            --card-bg: #111827;
+            --card-bg: oklch(15.5% 0 0);
             --shadow-color: rgba(0, 0, 0, 0.2);
             --accent-color: #374151;
             --error-color: #EF4444;
@@ -27,7 +27,7 @@
 
         body {
             font-family: 'Quantico', sans-serif;
-            background-color: var(--background-color);
+            background: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
             min-height: 100vh;
