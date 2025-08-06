@@ -3,7 +3,11 @@
     "builds": [
         {
             "src": "flasksetup.py",
-            "use": "@vercel/python"
+            "use": "@vercel/python",
+            "config": {
+                "maxLambdaSize": "25mb",
+                "split": true
+            }
         }
     ],
     "routes": [
@@ -12,5 +16,4 @@
             "dest": "flasksetup.py"
         }
     ]
-    
 }

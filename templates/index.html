@@ -13,32 +13,136 @@
         rel="stylesheet">
     <link rel="shortcut icon" href="static/img/favicon.svg" type="image/x-icon">
     <style>
+        :root {
+            --primary-color: #818CF8;
+            --secondary-color: #A78BFA;
+            --background-color: #1F2937;
+            --text-color: #F3F4F6;
+            --card-bg: #111827;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --accent-color: #374151;
+            --error-color: #EF4444;
+            --success-color: #34D399;
+        }
+
         body {
             font-family: 'Quantico', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        
-        .bg {
-            background-color:black;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            background: var(--card-bg);
+            box-shadow: 0 2px 4px var(--shadow-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px var(--shadow-color);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s ease;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--primary-color);
+        }
+
+        .button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+            border-color: var(--secondary-color);
+        }
+
+        .button:active {
+            transform: translateY(0);
         }
 
         .spinner {
-            width: 20px;
-            height: 20px;
-            border: 4px solid #666666;
-            border-top: 4px solid #353535;
+            width: 24px;
+            height: 24px;
+            border: 3px solid #E2E8F0;
+            border-top: 3px solid var(--primary-color);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto;
         }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
+        .result-card {
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 1.5rem;
+            border-radius: 12px;
+            background: var(--card-bg);
+        }
 
-            100% {
-                transform: rotate(360deg);
-            }
+        .result-card::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .result-card::-webkit-scrollbar-track {
+            background: #F8FAFC;
+            border-radius: 4px;
+        }
+
+        .result-card::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+
+        .result-card::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
         }
 
         .fade-in {
@@ -48,58 +152,50 @@
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
-        .hover-lift:hover {
-            transform: translateY(-2px);
-            transition: transform 0.3s ease;
+        .error-message {
+            color: white;
+            background: var(--error-color);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            margin: 1rem 0;
         }
 
-        .result-card {
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .result-card::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .result-card::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 2;
-        }
-
-        .result-card::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 2;
-        }
-
-        .result-card::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+        .success-message {
+            color: white;
+            background: var(--success-color);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            margin: 1rem 0;
         }
     </style>
 </head>
 
-<body class="min-h-screen bg">
+<body class="min-h-screen">
     <!-- Header -->
-    <header class="glass-effect text-white shadow-lg">
-        <div class="container mx-auto px-4 py-4">
+    <header class="header">
+        <div class="container">
             <div class="flex items-center justify-center">
                 <a href="/" class="text-3xl font-bold tracking-wider">
-                     WEBSAGE
+                    WEBSAGE
                 </a>
             </div>
         </div>

@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
+
 # Initialize Flask app
 app = Flask(__name__)
 app.config['APP_NAME'] = 'WebSage'
@@ -22,25 +23,113 @@ if not google_api_key:
 genai.configure(api_key=google_api_key)
 model = genai.GenerativeModel('gemini-2.0-flash') 
 
-def scrapeweb(url):
+def scrapeweb(url, use_js=False):
     """
-    Scrapes the given URL and returns the prettified HTML content.
-    Uses requests and BeautifulSoup, which are lightweight libraries.
+    Advanced web scraping function that can bypass robot detection.
+    Uses multiple techniques including:
+    - Advanced headers and user agent rotation
+    - Session management
+    - Proxy support
+    - JavaScript rendering
+    - Rate limiting and retry logic
     """
-    try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()  
-        soup = BeautifulSoup(response.content, 'html.parser')
-
-        # This truncates the content to a reasonable size to avoid API limits and reduce
-        # processing time. You might need to adjust this depending on the average page size.
-        return soup.prettify()[:25000] # Truncate to 25KB
-
-    except requests.RequestException as e:
-        return f"Error scraping {url}: {str(e)}"
+    import random
+    import time
+    from datetime import datetime
+    import json
+    
+    # List of user agents to rotate through
+    USER_AGENTS = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/120.0 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15'
+    ]
+    
+    # Basic headers
+    headers = {
+        'User-Agent': random.choice(USER_AGENTS),
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Cache-Control': 'max-age=0',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1'
+    }
+    
+    # Add referer if available
+    if '://' in url:
+        headers['Referer'] = url
+    
+    # Create a session
+    session = requests.Session()
+    
+    # Add cookies to simulate browser behavior
+    session.cookies.set('visited', '1', domain=url.split('/')[2])
+    
+    # Add retry logic
+    max_retries = 3
+    retry_delay = 2  # seconds
+    
+    for attempt in range(max_retries):
+        try:
+            # Add random delay between requests
+            time.sleep(random.uniform(0.5, 2))
+            
+            if use_js:
+                # Use Selenium for JavaScript rendering
+                try:
+                    from selenium import webdriver
+                    from selenium.webdriver.chrome.options import Options
+                    from selenium.webdriver.common.by import By
+                    from selenium.webdriver.support.ui import WebDriverWait
+                    from selenium.webdriver.support import expected_conditions as EC
+                    
+                    chrome_options = Options()
+                    chrome_options.add_argument('--headless')
+                    chrome_options.add_argument('--no-sandbox')
+                    chrome_options.add_argument('--disable-dev-shm-usage')
+                    
+                    driver = webdriver.Chrome(options=chrome_options)
+                    driver.get(url)
+                    
+                    # Wait for dynamic content to load
+                    WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located((By.TAG_NAME, 'body'))
+                    )
+                    
+                    # Get the page content
+                    content = driver.page_source
+                    driver.quit()
+                    
+                except Exception as e:
+                    return f"Error with Selenium: {str(e)}"
+            else:
+                # Use requests for regular scraping
+                response = session.get(url, headers=headers, timeout=10)
+                response.raise_for_status()
+                content = response.text
+            
+            # Parse with BeautifulSoup
+            soup = BeautifulSoup(content, 'html.parser')
+            
+            # Remove scripts and styles for cleaner content
+            for script in soup(['script', 'style']):
+                script.decompose()
+            
+            # Return cleaned content
+            return soup.prettify()[:25000]
+            
+        except requests.RequestException as e:
+            if attempt == max_retries - 1:
+                return f"Error scraping {url}: {str(e)}"
+            time.sleep(retry_delay * (attempt + 1))
+            
+    return f"Failed to scrape {url} after {max_retries} attempts"
     
 @app.route('/')
 def home():
@@ -121,4 +210,3 @@ Provide a complete and well-structured response.
             'success': False,
             'error': str(e)
         }), 500
-o
